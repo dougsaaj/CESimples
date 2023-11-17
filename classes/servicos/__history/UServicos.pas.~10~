@@ -1,0 +1,53 @@
+unit UServicos;
+
+interface
+
+uses
+    Controls,
+    uServicosMensagens,
+    u;
+
+type
+  Servicos = class
+  private
+
+  public
+    class function Mensagem: ServicosMensagens;
+    class function Conexao: ServicosMensagens;
+    class function Data: TDate;
+  end;
+
+implementation
+
+uses
+  CBanco,
+  SysUtils,
+  SqlExpr,
+  Classes;
+
+{ Servicos }
+
+class function Servicos.Data: TDate;
+var
+  vBD: TBancoAcesso;
+begin
+  vBD :=  TBancoAcesso.Create;
+
+  vBD.SQL_Query.SQL.Add('select');
+  vBD.SQL_Query.SQL.Add('   current_date as data');
+  vBD.SQL_Query.SQL.Add('from');
+  vBD.SQL_Query.SQL.Add('   rdb$database');
+
+  vBD.OpenConsulta;
+  Result  :=  vBD.cds.FieldByName('data').AsDateTime;
+  FreeAndNil(vBD);
+end;
+
+class function Servicos.Mensagem: ServicosMensagens;
+begin
+  Result  :=  ServicosMensagens(ServicosMensagens);
+  Result.Caption('Curso Delphi - Oriontec');
+end;
+
+end.
+

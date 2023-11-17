@@ -1,0 +1,30 @@
+unit uServicosConexao;
+
+interface
+
+uses
+  System.IniFiles, System.SysUtils, Vcl.Forms;
+
+type
+  ServicosConexao = class
+    public
+      class function LerArquivoIniIndiceBancos(Banco, acao: String): String;
+
+  end;
+implementation
+
+{ ServicosConexao }
+
+class function ServicosConexao.LerArquivoIniIndiceBancos(Banco, acao: String): String;
+var
+  VIniObj: TIniFile;
+Begin
+  VIniObj := TIniFile.Create(ExtractFilePath(Application.ExeName) + 'confbanco.ini');
+  try
+    Result := VIniObj.ReadString(Banco, acao, '');
+  finally
+    VIniObj.Free;
+  end;
+end;
+
+end.

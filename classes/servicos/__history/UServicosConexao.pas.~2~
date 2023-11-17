@@ -1,0 +1,28 @@
+unit UServicosConexao;
+
+interface
+
+type
+  ServicosConexao = class
+    public
+      class function LerArquivoIniIndiceBancosSTR(AFormulario: String; ABanco: String): String;
+
+  end;
+implementation
+
+{ ServicosConexao }
+
+class function ServicosConexao.LerArquivoIniIndiceBancosSTR(AFormulario,
+  ABanco: String): String;
+var
+  VIniObj: TIniFile;
+Begin
+  VIniObj := TIniFile.Create(ExtractFilePath(Application.ExeName) + 'ParametroKRP.ini');
+  try
+    Result := VIniObj.ReadString(ABanco, AFormulario, '');
+  finally
+    VIniObj.Free;
+  end;
+end;
+
+end.

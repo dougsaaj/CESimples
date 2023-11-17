@@ -1,0 +1,364 @@
+unit CBanco;
+
+interface
+
+Uses
+  System.Classes, Datasnap.DBClient, Datasnap.Provider, Data.DB, Data.DBXCommon,
+  Data.SqlExpr, System.Win.Registry;
+
+type
+    TBanco = class(TObject)
+      Base   : string;
+      BaseLog: string;
+      BaseIMG: string;
+      Usuario: string;
+      Senha  : string;
+      Empresa: Integer;
+    end;
+type
+    TBancoAcesso = class(TPersistent)
+    private
+      FTrans: TTransactionDesc;
+      FTransacao: TDBXTransaction;
+    public
+        Owner           : TComponent;
+        SQL_Query       : TSQLQuery;
+        Prov            : TDataSetProvider;
+        cds             : TClientDataSet;
+        Stored_Procedure: TSQLStoredProc;
+
+        constructor Create(pConn :TSQLConnection); overload;
+        constructor Create; overload;
+
+        procedure PreparaSQL;
+        procedure IniciarTransacao;
+        procedure CommitTransacao;
+        procedure RollbackTransacao;
+
+        function OpenConsulta:Boolean;
+        function getConn:TSQLConnection;
+        destructor Destroy; override;
+        procedure ExecuteSQL; overload;
+        procedure ExecuteQuery;
+        procedure ExecuteSQL(Transacao: Boolean); overload; // em teste por jorge eduardo;
+        procedure ExecuteProcedure;
+        function CodigoGenerator(generator_nome:string):Integer;
+        function CriarQuery: TSQLQuery;
+        function ExecutarConsulta(ASql: String): OleVariant;
+    end;
+
+type
+    TDAO = class(TObject)
+    protected
+      FBd: TBancoAcesso;
+    public
+      constructor Create(pConn :TSQLConnection); overload;
+      constructor Create; overload;
+      destructor Destroy; override;
+    end;
+
+type
+    TBancoRegistry = class(TBanco)
+    private
+        FReg: TRegistry;
+    public
+        constructor Create; overload;
+    end;
+
+implementation
+
+uses
+  Winapi.Windows,
+  CEDM,
+  System.SysUtils;
+
+var
+  ContBanco: Integer;
+
+{ BancoAcesso }
+
+constructor TBancoAcesso.Create(pConn: TSQLConnection);
+begin
+  inherited Create;
+
+  Owner            := TComponent.Create(nil);
+  SQL_Query        := TSQLQuery.Create(Owner);
+  Prov             := TDataSetProvider.Create(Owner);
+  Prov.Name        := 'prov';
+  cds              := TClientDataSet.Create(Owner);
+  Stored_Procedure := TSQLStoredProc.Create(Owner);
+
+  //Setar os componentes
+  SQL_Query.SQLConnection    := pConn;
+  Prov.DataSet               := SQL_Query;
+  cds.ProviderName := Prov.Name;
+  Stored_Procedure.SQLConnection := pConn;
+  Self.PreparaSQL;
+
+  Inc(ContBanco);
+end;
+
+function TBancoAcesso.CodigoGenerator(
+  generator_nome: string): Integer;
+var
+  vBd: TBancoAcesso;
+begin
+  vBd :=  TBancoAcesso.Create;
+  vBd.SQL_Query.SQL.Add(' select                                                    ');
+  vBd.SQL_Query.SQL.Add('     cast(gen_id('+generator_nome+', 1) as integer) as cod ');
+  vBd.SQL_Query.SQL.Add(' from                                                      ');
+  vBd.SQL_Query.SQL.Add('     rdb$database                                          ');
+  vBd.OpenConsulta;
+
+  if vBd.cds.FieldByName('cod').AsString = '' then
+    Result  :=  1
+  else
+    Result  :=  vBd.cds.FieldByName('cod').AsInteger;
+
+  FreeAndNil(vBd);
+end;
+
+procedure TBancoAcesso.CommitTransacao;
+begin
+  if not Assigned(FTransacao) then
+    raise Exception.Create(ClassName + ': Transação não inicializada.');
+
+  DMCE.Conn.CommitFreeAndNil(FTransacao);
+end;
+
+constructor TBancoAcesso.Create;
+begin
+  inherited Create;
+
+  Owner            := TComponent.Create(nil);
+  SQL_Query        := TSQLQuery.Create(Owner);
+  Prov             := TDataSetProvider.Create(Owner);
+  Prov.Name        := 'prov';
+  cds              := TClientDataSet.Create(Owner);
+  Stored_Procedure := TSQLStoredProc.Create(Owner);
+
+  SQL_Query.SQLConnection    := DMCE.Conn;
+  Prov.DataSet               := SQL_Query;
+  cds.ProviderName := Prov.Name;
+  Stored_Procedure.SQLConnection := DMCE.Conn;
+  Self.PreparaSQL;
+
+  Inc(ContBanco);
+end;
+
+function TBancoAcesso.CriarQuery: TSQLQuery;
+var
+  VQry: TSQLQuery;
+begin
+  VQry               := TSQLQuery.Create(nil);
+  VQry.SQLConnection := DMCE.Conn;
+
+  Result := VQry;
+end;
+
+destructor TBancoAcesso.Destroy;
+begin
+  Self.PreparaSQL;
+  Self.Stored_Procedure.Destroy;
+  Self.cds.Destroy;
+  Self.Prov.Destroy;
+  Self.SQL_Query.Destroy;
+  Self.Owner.Destroy;
+
+  Dec(ContBanco);
+
+  inherited Destroy;
+end;
+
+function TBancoAcesso.ExecutarConsulta(ASql: String): OleVariant;
+var
+  VProvider: TDataSetProvider;
+  VQry: TSQLQuery;
+begin
+  try
+    VProvider := TDataSetProvider.Create(nil);
+    try
+      VQry := Self.CriarQuery;
+      try
+        VProvider.DataSet := VQry;
+        VQry.Close;
+        VQry.SQL.Text := ASql;
+        VQry.Open;
+        try
+          Result := VProvider.Data;
+        finally
+          VQry.Close;
+        end;
+      finally
+        FreeAndNil(VQry);
+      end;
+    finally
+      FreeAndNil(VProvider);
+    end;
+  except
+    on E: Exception do
+    begin
+      raise;
+    end;
+  end;
+end;
+
+procedure TBancoAcesso.ExecuteProcedure;
+var
+  Trans: TTransactionDesc;
+begin
+  Trans.TransactionID     :=  GetTickCount;
+  Trans.IsolationLevel    :=  xilREADCOMMITTED;
+
+  try
+    Self.getConn.StartTransaction( Trans );
+
+    Self.Stored_Procedure.ExecProc;
+
+    Self.getConn.Commit( Trans );
+  except
+    on e:Exception do
+    begin
+      Self.getConn.Rollback( Trans );
+      raise Exception.Create('Falha ao executar a procedure '+Self.Stored_Procedure.StoredProcName+'. Falha: '+e.Message);
+    end;
+  end;
+end;
+
+procedure TBancoAcesso.ExecuteQuery;
+begin
+  try
+    Self.SQL_Query.ExecSQL;
+  except
+    on E: Exception do
+    begin
+      raise Exception.Create('Falha ao executar a query. Falha: ' + E.Message);
+    end;
+  end;
+end;
+
+procedure TBancoAcesso.ExecuteSQL(Transacao: Boolean);
+var
+   Trans: TTransactionDesc;
+begin
+  if Transacao then
+  begin
+    Trans.TransactionID     :=  GetTickCount;
+    Trans.IsolationLevel    :=  xilREADCOMMITTED;
+    Self.getConn.StartTransaction( Trans );
+  end;
+
+  try
+    Self.SQL_Query.ExecSQL();
+
+    if Transacao then
+      Self.getConn.Commit( Trans );
+  except
+    on e:Exception do
+    begin
+      if Transacao then
+        Self.getConn.Rollback( Trans );
+
+      raise Exception.Create('Falha ao executar o comando SQL. Falha: '+e.Message);
+    end;
+  end;
+end;
+
+procedure TBancoAcesso.ExecuteSQL;
+var
+  Trans: TTransactionDesc;
+begin
+  Trans.TransactionID     :=  GetTickCount;
+  Trans.IsolationLevel    :=  xilREADCOMMITTED;
+  Self.getConn.StartTransaction( Trans );
+
+  try
+    Self.SQL_Query.ExecSQL();
+
+    Self.getConn.Commit( Trans );
+  except
+    on e:Exception do
+    begin
+        Self.getConn.Rollback( Trans );
+        raise Exception.Create('Falha ao executar o comando SQL. Falha: '+e.Message);
+    end;
+  end;
+end;
+
+function TBancoAcesso.getConn: TSQLConnection;
+begin
+  Result  :=  SQL_Query.SQLConnection;
+end;
+
+procedure TBancoAcesso.IniciarTransacao;
+begin
+  if Assigned(FTransacao) then
+    raise Exception.Create(ClassName + ': Transação já inicializada.');
+
+  FTransacao := DMCE.Conn.BeginTransaction(TDBXIsolations.ReadCommitted);
+end;
+
+function TBancoAcesso.OpenConsulta: Boolean;
+begin
+  Result := False;
+  Self.cds.Close;
+  Self.cds.Open;
+  Self.cds.First;
+  if Self.cds.RecordCount > 0 then
+      Result := True;
+end;
+
+procedure TBancoAcesso.PreparaSQL;
+begin
+  Self.cds.Close;
+  Self.SQL_Query.SQL.Clear;
+  Self.cds.Fields.Clear;
+  Self.Stored_Procedure.StoredProcName    :=  '';
+  Self.Stored_Procedure.Params.Clear;
+end;
+
+procedure TBancoAcesso.RollbackTransacao;
+begin
+  if not Assigned(FTransacao) then
+    raise Exception.Create(ClassName + ': Transação não inicializada.');
+
+  DMCE.Conn.RollbackFreeAndNil(FTransacao);
+end;
+
+{ TDAO }
+
+constructor TDAO.Create(pConn: TSQLConnection);
+begin
+    inherited Create;
+    FBd :=  TBancoAcesso.Create(pConn);
+end;
+
+constructor TDAO.Create;
+begin
+  inherited Create;
+
+  FBd := TBancoAcesso.Create;
+end;
+
+destructor TDAO.Destroy;
+begin
+  if Self.FBd <> nil then
+    Self.FBd.Destroy;
+
+  inherited Destroy;
+end;
+
+end.
+
+
+
+
+
+
+
+
+
+
+
+
+

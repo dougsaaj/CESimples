@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>2022/06/01 10:34:53.000.216,=C:\Users\Administrador\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2023/11/17 07:49:48.000.055,=C:\Users\Administrador\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2023/11/17 07:50:17.000.229,=C:\DouglasSales\CursoDelphi\CursoDelphi\CEPrincipal.pas</Transaction>
+    <Transaction>2023/11/17 07:51:07.000.115,C:\DouglasSales\CursoDelphi\CursoDelphi\CursoDelphi.dproj=C:\Users\Administrador\Documents\Embarcadero\Studio\Projects\Project1.dproj</Transaction>
+    <Transaction>2023/11/17 07:55:34.000.954,=C:\DouglasSales\CursoDelphi\CursoDelphi\Unit1.pas</Transaction>
+    <Transaction>2023/11/17 07:55:56.000.071,C:\DouglasSales\CursoDelphi\CursoDelphi\CEDM.pas=C:\DouglasSales\CursoDelphi\CursoDelphi\Unit1.pas</Transaction>
+    <Transaction>2023/11/17 07:55:56.000.071,C:\DouglasSales\CursoDelphi\CursoDelphi\CEDM.dfm=C:\DouglasSales\CursoDelphi\CursoDelphi\Unit1.dfm</Transaction>
+    <Transaction>2023/11/17 08:13:26.000.670,=C:\DouglasSales\CursoDelphi\CursoDelphi\classes\CBanco.pas</Transaction>
+    <Transaction>2023/11/17 08:13:33.000.106,=C:\DouglasSales\CursoDelphi\CursoDelphi\classes\servicos\UServicos.pas</Transaction>
+    <Transaction>2023/11/17 08:13:39.000.900,=C:\DouglasSales\CursoDelphi\CursoDelphi\classes\servicos\uServicosMensagens.pas</Transaction>
+    <Transaction>2023/11/17 08:30:12.000.567,=C:\DouglasSales\CursoDelphi\CursoDelphi\Unit1.pas</Transaction>
+    <Transaction>2023/11/17 08:30:26.000.956,C:\DouglasSales\CursoDelphi\CursoDelphi\classes\servicos\UServicosConexao.pas=C:\DouglasSales\CursoDelphi\CursoDelphi\Unit1.pas</Transaction>
+    <Transaction>2023/11/17 08:55:02.000.800,=C:\DouglasSales\CursoDelphi\CursoDelphi\CECadastro.pas</Transaction>
+    <Transaction>2023/11/17 08:57:42.000.007,=C:\DouglasSales\CursoDelphi\CursoDelphi\CEAltCadastro.pas</Transaction>
+    <Transaction>2023/11/17 08:58:04.000.137,=C:\DouglasSales\CursoDelphi\CursoDelphi\CEDialogo.pas</Transaction>
+    <Transaction>2023/11/17 08:58:40.000.156,=C:\DouglasSales\CursoDelphi\CursoDelphi\CEPesquisar.pas</Transaction>
+    <Transaction>2023/11/17 08:59:01.000.919,=C:\DouglasSales\CursoDelphi\CursoDelphi\CEFiltro.pas</Transaction>
+    <Transaction>2023/11/17 09:02:27.000.997,=C:\DouglasSales\CursoDelphi\CursoDelphi\CECadCli.pas</Transaction>
+    <Transaction>2023/11/17 09:03:07.000.668,=C:\DouglasSales\CursoDelphi\CursoDelphi\CEAltCadCli.pas</Transaction>
+    <Transaction>2023/11/17 09:05:23.000.293,C:\DouglasSales\CursoDelphi\CursoDelphi\CEAltCadCli.pas=</Transaction>
+    <Transaction>2023/11/17 09:05:48.000.733,=C:\DouglasSales\CursoDelphi\CursoDelphi\CEAltCadCli.pas</Transaction>
+    <Transaction>2023/11/17 09:08:55.000.266,=C:\DouglasSales\CursoDelphi\CursoDelphi\Unit1.pas</Transaction>
+    <Transaction>2023/11/17 09:09:17.000.038,C:\DouglasSales\CursoDelphi\CursoDelphi\CEDMCliente.dfm=C:\DouglasSales\CursoDelphi\CursoDelphi\Unit1.dfm</Transaction>
+    <Transaction>2023/11/17 09:09:17.000.038,C:\DouglasSales\CursoDelphi\CursoDelphi\CEDMCliente.pas=C:\DouglasSales\CursoDelphi\CursoDelphi\Unit1.pas</Transaction>
+    <Transaction>2023/11/17 09:23:48.000.844,=C:\DouglasSales\CursoDelphi\CursoDelphi\CEPesqCli.pas</Transaction>
+    <Transaction>2023/11/17 09:24:24.000.884,=C:\DouglasSales\CursoDelphi\CursoDelphi\CEFiltCli.pas</Transaction>
+    <Transaction>2023/11/17 09:33:13.000.342,=C:\DouglasSales\CursoDelphi\CursoDelphi\Unit1.pas</Transaction>
+    <Transaction>2023/11/17 09:33:16.000.983,=C:\DouglasSales\CursoDelphi\CursoDelphi\Unit2.pas</Transaction>
+    <Transaction>2023/11/17 09:33:35.000.921,C:\DouglasSales\CursoDelphi\CursoDelphi\classes\clientes\Uclientes.pas=C:\DouglasSales\CursoDelphi\CursoDelphi\Unit2.pas</Transaction>
+    <Transaction>2023/11/17 09:33:45.000.649,C:\DouglasSales\CursoDelphi\CursoDelphi\classes\clientes\UclienteDao.pas=C:\DouglasSales\CursoDelphi\CursoDelphi\Unit1.pas</Transaction>
+    <Transaction>2023/11/17 12:01:22.000.849,=C:\DouglasSales\CursoDelphi\CursoDelphi2\Unit1.pas</Transaction>
+    <Transaction>2023/11/17 12:01:37.000.136,C:\DouglasSales\CursoDelphi\CursoDelphi2\Unit1.pas=C:\DouglasSales\CursoDelphi\CursoDelphi2\CECadCliente.pas</Transaction>
+    <Transaction>2023/11/17 12:01:37.000.136,C:\DouglasSales\CursoDelphi\CursoDelphi2\Unit1.dfm=C:\DouglasSales\CursoDelphi\CursoDelphi2\CECadCliente.dfm</Transaction>
+    <Transaction>2023/11/17 12:08:54.000.019,C:\DouglasSales\CursoDelphi\CursoDelphi2\CEAltCadCli.pas=</Transaction>
+    <Transaction>2023/11/17 14:48:24.571,=C:\DouglasSales\CursoDelphi\CursoDelphi2\Unit1.pas</Transaction>
+    <Transaction>2023/11/17 14:48:42.203,C:\DouglasSales\CursoDelphi\CursoDelphi2\CERelCliente.dfm=C:\DouglasSales\CursoDelphi\CursoDelphi2\Unit1.dfm</Transaction>
+    <Transaction>2023/11/17 14:48:42.203,C:\DouglasSales\CursoDelphi\CursoDelphi2\CERelCliente.pas=C:\DouglasSales\CursoDelphi\CursoDelphi2\Unit1.pas</Transaction>
+  </Transactions>
+</BorlandProject>
